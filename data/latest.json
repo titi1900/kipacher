@@ -1,0 +1,78 @@
+{
+  "meta": {
+    "generated_at": "2026-11-06T13:30:00+01:00",
+    "source": "demo",
+    "version": "1.0",
+    "currency": "EUR"
+  },
+  "stores": [
+    {
+      "id": "carrefour-demo",
+      "name": "Carrefour Market Demo",
+      "brand": "Carrefour",
+      "type": "supermarket",
+      "lat": 48.8566,
+      "lon": 2.3522,
+      "address": "Paris Centre",
+      "city": "Paris",
+      "postcode": "75001",
+      "opening_hours": "Mo-Sa 08:30-21:00",
+      "prices": {
+        "3017620422003": {
+          "price": 4.29,
+          "available": true,
+          "promo": false,
+          "date": "2026-11-06"
+        },
+        "3228857000906": {
+          "price": 1.15,
+          "available": true,
+          "promo": true,
+          "date": "2026-11-06"
+        }
+      }
+    },
+    {
+      "id": "lidl-demo",
+      "name": "Lidl Demo",
+      "brand": "Lidl",
+      "type": "supermarket",
+      "lat": 48.8600,
+      "lon": 2.3400,
+      "address": "Paris",
+      "city": "Paris",
+      "postcode": "75001",
+      "opening_hours": "Mo-Sa 08:00-20:00",
+      "prices": {
+        "3017620422003": {
+          "price": 3.99,
+          "available": true,
+          "promo": true,
+          "date": "2026-11-06"
+        },
+        "3228857000906": {
+          "price": 1.09,
+          "available": true,
+          "promo": false,
+          "date": "2026-11-06"
+        }
+      }
+    }
+  ],
+  "products": {
+    "3017620422003": {
+      "ean": "3017620422003",
+      "name": "Nutella 400g",
+      "brand": "Ferrero",
+      "quantity": "400 g",
+      "category": "Pâtes à tartiner"
+    }, bas
+    "3228857000906": {
+      "ean": "3228857000906",
+      "name": "Lait demi-écrémé 1L",
+      "brand": "Candia",
+      "quantity": "1 L",
+      "category": "Laits"
+    }
+  }
+}

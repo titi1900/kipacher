@@ -1,0 +1,99 @@
+# ============================================================
+# KIPACHER – Mise à jour automatique de data/latest.json
+# ============================================================
+# - Schedule quotidien 05:00 UTC
+# - Lancement manuel (workflow_dispatch)
+# - Grandes villes FR + 30 EAN (via env)
+# ============================================================
+
+name: Update KIPACHER prices
+
+on:
+  schedule:
+    # Tous les jours à 05:00 UTC (≈ 06:00 Paris en hiver)
+    - cron: "0 5 * * *"
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: "Raison du lancement manuel (optionnel)"
+        required: false
+        default: "manual"
+
+permissions:
+  contents: write
+
+jobs:
+  update-prices:
+    name: Générer latest.json puis commit
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: update-prices-${{ github.ref }}
+      cancel-in-progress: false
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+          cache-dependency-path: scripts/requirements.txt
+
+      - name: Install Python dependencies
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f scripts/requirements.txt ]; then
+            pip install -r scripts/requirements.txt
+          else
+            pip install requests
+          fi
+
+      - name: Ensure data directory exists
+        run: mkdir -p data
+
+      - name: Run price update script
+        run: python scripts/update_prices.py
+        env:
+          PYTHONUNBUFFERED: "1"
+          CENTERS: "paris,lyon,marseille,toulouse,nice,nantes,montpellier,strasbourg,bordeaux,lille,rennes,grenoble,dijon,dunkerque"
+          RADIUS_KM: "8"
+          MAX_STORES_PER_CENTER: "20"
+          MAX_STORES_TO_PRICE: "40"
+          MAX_PRODUCTS: "30"
+          # SKIP_OFF: "1"
+
+      - name: Check generated file
+        run: |
+          if [ ! -f data/latest.json ]; then
+            echo "ERREUR : data/latest.json introuvable"
+            exit 1
+          fi
+          ls -lh data/latest.json
+          python -c "import json; d=json.load(open('data/latest.json')); print('stores', len(d.get('stores', []))); print('products', len(d.get('products', {}))); print('centers', (d.get('meta') or {}).get('centers'))"
+
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git add data/latest.json
+
+          if git diff --staged --quiet; then
+            echo "Aucun changement dans data/latest.json — pas de commit."
+            exit 0
+          fi
+
+          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
+          git commit -m "chore(data): update prices – ${TIMESTAMP}"
+
+          # Évite un rejet si main a avancé pendant le job
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+          echo "Push OK."

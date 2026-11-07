@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>KIPACHER – Comparateur de prix</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <style>
+    :root {
+      --primary: #0ea5e9; --primary-dark: #0284c7; --success: #22c55e; --danger: #ef4444;
+      --bg: #f8fafc; --card: #fff; --text: #1e293b; --muted: #64748b; --border: #e2e8f0;
+      --sidebar-width: 400px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: system-ui, sans-serif; background: var(--bg); color: var(--text); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+    header { background: linear-gradient(135deg,#0ea5e9,#0284c7); color:#fff; padding:12px 20px; display:flex; align-items:center; gap:12px; z-index:1000; }
+    header h1 { font-size:1.2rem; font-weight:600; flex:1; }
+    .btn-toggle-sidebar { background:rgba(255,255,255,.2); border:1px solid rgba(255,255,255,.35); color:#fff; width:40px; height:40px; border-radius:8px; cursor:pointer; font-size:20px; }
+    .main { flex:1; display:grid; grid-template-columns: var(--sidebar-width) 1fr; overflow:hidden; transition: grid-template-columns .3s; }
+    body.sidebar-collapsed .main { grid-template-columns: 0 1fr; }
+    @media (max-width:900px) {
+      .main { grid-template-columns:1fr; grid-template-rows:50% 50%; }
+      body.sidebar-collapsed .main { grid-template-rows:0 100%; }
+    }
+    .sidebar { background:var(--card); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; min-width:0; }
+    body.sidebar-collapsed .sidebar { opacity:0; pointer-events:none; }
+    .search-box { padding:14px; border-bottom:1px solid var(--border); background:#f1f5f9; }
+    .search-row { display:flex; gap:8px; margin-bottom:10px; }
+    .search-row input { flex:1; padding:10px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; }
+    .btn { padding:10px 14px; border:none; border-radius:8px; background:var(--primary); color:#fff; cursor:pointer; font-weight:500; font-size:14px; }
+    .btn:hover { background:var(--primary-dark); }
+    .btn-outline { background:#fff; color:var(--primary); border:1px solid var(--primary); }
+    .btn-sm { padding:6px 10px; font-size:13px; }
+    .btn-danger { background:var(--danger); }
+    .radius-row { display:flex; align-items:center; gap:10px; font-size:13px; color:var(--muted); margin-bottom:4px; }
+    .radius-row input[type=range] { flex:1; }
+    .hint { font-size:12px; color:var(--muted); margin-top:6px; }
+    .user-info, .meta-info { padding:10px 14px; font-size:13px; color:var(--muted); border-bottom:1px solid var(--border); }
+    .user-info { background:#f0f9ff; }
+    .meta-info { background:#f8fafc; font-size:12px; }
+    .basket-section { padding:12px 14px; border-bottom:1px solid var(--border); background:#fefce8; }
+    .basket-section h3 { font-size:13px; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+    .basket-item { display:flex; justify-content:space-between; align-items:center; padding:6px 0; font-size:13px; border-bottom:1px solid #fef3c7; }
+    .basket-empty { font-size:13px; color:var(--muted); font-style:italic; }
+    .basket-actions { display:flex; gap:8px; margin-top:10px; }
+    .list { flex:1; overflow-y:auto; padding:8px; }
+    .card { background:#fff; border:1px solid var(--border); border-radius:10px; padding:12px 14px; margin-bottom:8px; cursor:pointer; }
+    .card:hover { box-shadow:0 4px 12px rgba(0,0,0,.08); }
+    .card.best { border-color:var(--success); background:#f0fdf4; }
+    .card-header { display:flex; justify-content:space-between; gap:8px; margin-bottom:6px; }
+    .card-title { font-weight:600; font-size:14px; }
+    .card-price { font-weight:700; font-size:16px; color:var(--primary-dark); }
+    .card-meta { font-size:12px; color:var(--muted); margin-top:3px; }
+    .badge { font-size:11px; padding:3px 8px; border-radius:12px; font-weight:600; }
+    .badge.best { background:#dcfce7; color:#166534; }
+    .badge.partial { background:#fef3c7; color:#92400e; }
+    .badge.none { background:#f1f5f9; color:#475569; }
+    .empty, .loading { text-align:center; padding:40px 20px; color:var(--muted); font-size:14px; line-height:1.5; }
+    #map { height:100%; width:100%; }
+    .btn-reopen-sidebar {
+      position:absolute; top:16px; left:16px; z-index:1000; width:44px; height:44px; border-radius:10px;
+      background:#fff; border:1px solid var(--border); box-shadow:0 4px 14px rgba(0,0,0,.15);
+      cursor:pointer; font-size:22px; display:none; align-items:center; justify-content:center; color:var(--primary);
+    }
+    body.sidebar-collapsed .btn-reopen-sidebar { display:flex; }
+    .detail-panel {
+      position:fixed; top:0; right:0; width:420px; max-width:100%; height:100%; background:#fff;
+      box-shadow:-4px 0 24px rgba(0,0,0,.15); z-index:3000; transform:translateX(100%); transition:transform .25s;
+      display:flex; flex-direction:column;
+    }
+    .detail-panel.open { transform:translateX(0); }
+    .detail-header { padding:16px 20px; background:var(--primary); color:#fff; display:flex; justify-content:space-between; align-items:center; }
+    .close-btn { background:transparent; border:none; color:#fff; font-size:24px; cursor:pointer; }
+    .detail-body { flex:1; overflow-y:auto; padding:16px 20px; }
+    .detail-section { margin-bottom:18px; }
+    .detail-section h3 { font-size:13px; text-transform:uppercase; color:var(--muted); margin-bottom:8px; }
+    table { width:100%; border-collapse:collapse; font-size:13px; }
+    th, td { padding:8px 6px; text-align:left; border-bottom:1px solid var(--border); }
+    th { color:var(--muted); }
+    .toast {
+      position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#1e293b; color:#fff;
+      padding:10px 20px; border-radius:8px; font-size:14px; z-index:4000; opacity:0; transition:opacity .3s; pointer-events:none;
+    }
+    .toast.show { opacity:1; }
+    .marker-icon {
+      width:22px; height:22px; border-radius:50%; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.4);
+      display:flex; align-items:center; justify-content:center; font-size:11px; font-weight:700; color:#fff;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>KIPACHER – Panier le moins cher</h1>
+    <button class="btn-toggle-sidebar" id="btnToggleSidebar">☰</button>
+  </header>
+
+  <div class="main">
+    <div class="sidebar">
+      <div class="search-box">
+        <div class="search-row">
+          <input type="text" id="productInput" placeholder="Code-barres ou nom produit…" />
+          <button class="btn" id="btnAddProduct">Ajouter</button>
+          <button class="btn btn-outline" id="btnGeo">📍</button>
+        </div>
+        <div class="radius-row">
+          <label>Rayon :</label>
+          <input type="range" id="radiusInput" min="1" max="20" value="8" />
+          <span id="radiusValue">8 km</span>
+        </div>
+        <div class="hint">Cliquez sur la carte pour choisir votre point de départ</div>
+      </div>
+
+      <div class="user-info" id="userInfo">Position non définie</div>
+      <div class="meta-info" id="metaInfo">Chargement des données…</div>
+
+      <div class="basket-section">
+        <h3>Mon panier (<span id="basketCount">0</span>)</h3>
+        <div id="basketList"><div class="basket-empty">Aucun produit</div></div>
+        <div class="basket-actions">
+          <button class="btn btn-sm" id="btnCompare" disabled>Comparer</button>
+          <button class="btn btn-sm btn-outline btn-danger" id="btnClearBasket">Vider</button>
+        </div>
+      </div>
+
+      <div class="list" id="storeList">
+        <div class="empty">Définissez votre position (clic carte ou 📍)</div>
+      </div>
+    </div>
+
+    <div style="position:relative;min-width:0;">
+      <button class="btn-reopen-sidebar" id="btnReopenSidebar">☰</button>
+      <div id="map"></div>
+    </div>
+  </div>
+
+  <div class="detail-panel" id="detailPanel">
+    <div class="detail-header">
+      <h2 id="detailTitle">Détail</h2>
+      <button class="close-btn" id="closeDetail">×</button>
+    </div>
+    <div class="detail-body" id="detailBody"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+<script>
+const CONFIG = {
+  DATA_URL: "data/latest.json",
+  DEFAULT_RADIUS_KM: 8
+};
+
+/* Données de secours si data/latest.json est introuvable */
+const FALLBACK_DATA = {
+  meta: {
+    generated_at: new Date().toISOString(),
+    source: "demo-intégrée",
+    version: "1.0",
+    currency: "EUR"
+  },
+  stores: [
+    {
+      id: "demo-carrefour-lille",
+      name: "Carrefour Market (démo)",
+      brand: "Carrefour",
+      lat: 50.6292,
+      lon: 3.0573,
+      address: "Lille centre",
+      city: "Lille",
+      postcode: "59000",
+      opening_hours: "Mo-Sa 08:30-21:00",
+      prices: {
+        "3017620422003": { price: 4.29, available: true, promo: false, date: "2026-11-06" },
+        "3266980135645": { price: 2.45, available: true, promo: true, date: "2026-11-06" },
+        "coulommiers-demo": { price: 2.15, available: true, promo: false, date: "2026-11-06" }
+      }
+    },
+    {
+      id: "demo-lidl-lille",
+      name: "Lidl (démo)",
+      brand: "Lidl",
+      lat: 50.6150,
+      lon: 3.1400,
+      address: "Lille Est",
+      city: "Lille",
+      postcode: "59000",
+      opening_hours: "Mo-Sa 08:00-20:00",
+      prices: {
+        "3017620422003": { price: 3.99, available: true, promo: true, date: "2026-11-06" },
+        "3266980135645": { price: 2.29, available: true, promo: false, date: "2026-11-06" },
+        "coulommiers-demo": { price: 1.99, available: true, promo: true, date: "2026-11-06" }
+      }
+    },
+    {
+      id: "demo-intermarche",
+      name: "Intermarché (démo)",
+      brand: "Intermarché",
+      lat: 50.6250,
+      lon: 3.1100,
+      address: "près de vous",
+      city: "Lille",
+      postcode: "59000",
+      prices: {
+        "3017620422003": { price: 4.15, available: true, promo: false, date: "2026-11-06" },
+        "coulommiers-demo": { price: 2.05, available: false, promo: false, date: "2026-11-05" }
+      }
+    }
+  ],
+  products: {
+    "3017620422003": { ean: "3017620422003", name: "Nutella 400g", brand: "Ferrero", quantity: "400 g" },
+    "3266980135645": { ean: "3266980135645", name: "Coca-Cola 1.25L", brand: "Coca-Cola", quantity: "1.25 L" },
+    "coulommiers-demo": { ean: "coulommiers-demo", name: "Coulommiers", brand: "Démo", quantity: "200 g" }
+  }
+};
+
+let map, markersLayer, userMarker;
+let userLat = null, userLon = null;
+let radiusKm = CONFIG.DEFAULT_RADIUS_KM;
+let data = null;
+let nearbyStores = [];
+let basket = JSON.parse(localStorage.getItem("kipacher_basket") || "[]");
+let sidebarCollapsed = false;
+
+map = L.map("map").setView([50.6292, 3.0573], 11);
+L.tileLayer("https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}", {
+  attribution: "Esri", maxZoom: 19
+}).addTo(map);
+markersLayer = L.layerGroup().addTo(map);
+
+map.on("click", (e) => setUserPosition(e.latlng.lat, e.latlng.lng, "Clic carte"));
+
+document.getElementById("radiusInput").oninput = (e) => {
+  radiusKm = +e.target.value;
+  document.getElementById("radiusValue").textContent = radiusKm + " km";
+};
+document.getElementById("radiusInput").onchange = () => { if (userLat != null) filterNearbyStores(); };
+
+document.getElementById("btnToggleSidebar").onclick =
+document.getElementById("btnReopenSidebar").onclick = () => {
+  sidebarCollapsed = !sidebarCollapsed;
+  document.body.classList.toggle("sidebar-collapsed", sidebarCollapsed);
+  setTimeout(() => map.invalidateSize({ animate: true }), 320);
+};
+
+loadData();
+renderBasket();
+
+async function loadData() {
+  try {
+    const res = await fetch(CONFIG.DATA_URL);
+    if (!res.ok) throw new Error("HTTP " + res.status);
+    data = await res.json();
+    document.getElementById("metaInfo").textContent =
+      `Fichier JSON • ${data.stores?.length || 0} magasins • ${data.meta?.generated_at?.slice(0,16) || ""}`;
+    showToast("Données JSON chargées");
+  } catch (err) {
+    console.warn("JSON introuvable, utilisation des données de démo", err);
+    data = FALLBACK_DATA;
+    document.getElementById("metaInfo").textContent =
+      `Mode démo (data/latest.json introuvable) • ${data.stores.length} magasins`;
+    showToast("Mode démo activé");
+  }
+  if (userLat != null) filterNearbyStores();
+}
+
+function showToast(msg) {
+  const t = document.getElementById("toast");
+  t.textContent = msg;
+  t.classList.add("show");
+  setTimeout(() => t.classList.remove("show"), 2500);
+}
+
+function haversine(lat1, lon1, lat2, lon2) {
+  const R = 6371;
+  const dLat = (lat2-lat1)*Math.PI/180, dLon = (lon2-lon1)*Math.PI/180;
+  const a = Math.sin(dLat/2)**2 + Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2;
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+}
+
+function formatPrice(p) {
+  return (p == null || isNaN(p)) ? "—" : p.toFixed(2).replace(".", ",") + " €";
+}
+
+function saveBasket() {
+  localStorage.setItem("kipacher_basket", JSON.stringify(basket));
+  renderBasket();
+}
+
+async function setUserPosition(lat, lon, source = "Position") {
+  userLat = lat;
+  userLon = lon;
+
+  if (userMarker) map.removeLayer(userMarker);
+  userMarker = L.circleMarker([lat, lon], {
+    radius: 11, color: "#0284c7", fillColor: "#0ea5e9", fillOpacity: 0.85, weight: 3
+  }).addTo(map).bindPopup("Point de départ");
+  map.setView([lat, lon], 13);
+
+  let placeName = `${lat.toFixed(4)}, ${lon.toFixed(4)}`;
+  try {
+    const res = await fetch(`https://geo.api.gouv.fr/communes?lat=${lat}&lon=${lon}&fields=nom,code,codesPostaux`);
+    if (res.ok) {
+      const arr = await res.json();
+      if (arr?.length) {
+        const c = arr[0];
+        const cp = (c.codesPostaux && c.codesPostaux[0]) || c.code;
+        placeName = `${c.nom} (${cp})`;
+      }
+    }
+  } catch (e) { /* garde les coordonnées */ }
+
+  document.getElementById("userInfo").innerHTML =
+    `📍 <strong>${placeName}</strong><br><small>${source} • rayon ${radiusKm} km</small>`;
+
+  showToast("Position : " + placeName);
+  filterNearbyStores();
+}
+
+document.getElementById("btnGeo").onclick = () => {
+  if (!navigator.geolocation) return showToast("Géolocalisation non supportée");
+  showToast("Localisation GPS…");
+  navigator.geolocation.getCurrentPosition(
+    pos => setUserPosition(pos.coords.latitude, pos.coords.longitude, "GPS"),
+    () => showToast("GPS impossible")
+  );
+};
+
+function filterNearbyStores() {
+  if (!data || userLat == null) return;
+  nearbyStores = (data.stores || [])
+    .map(s => ({ ...s, distance_km: haversine(userLat, userLon, s.lat, s.lon) }))
+    .filter(s => s.distance_km <= radiusKm)
+    .sort((a, b) => a.distance_km - b.distance_km);
+
+  markersLayer.clearLayers();
+  nearbyStores.forEach((s, i) => {
+    const icon = L.divIcon({
+      className: "",
+      html: `<div class="marker-icon" style="background:#0ea5e9">${i+1}</div>`,
+      iconSize: [22,22], iconAnchor: [11,11]
+    });
+    const m = L.marker([s.lat, s.lon], { icon });
+    m.bindPopup(`<strong>${s.name}</strong><br>${s.distance_km.toFixed(1)} km`);
+    m.on("click", () => openStoreDetail(s));
+    markersLayer.addLayer(m);
+  });
+
+  renderStoreList();
+}
+
+function renderStoreList() {
+  const el = document.getElementById("storeList");
+  if (!nearbyStores.length) {
+    el.innerHTML = `<div class="empty">Aucun magasin dans un rayon de ${radiusKm} km<br><small>(données de démo centrées sur Lille)</small></div>`;
+    return;
+  }
+  el.innerHTML = nearbyStores.map((s, i) => `
+    <div class="card" data-i="${i}">
+      <div class="card-header">
+        <div class="card-title">${s.name}</div>
+        <span class="badge none">${s.distance_km.toFixed(1)} km</span>
+      </div>
+      <div class="card-meta">${s.brand || ""} • ${s.city || ""}</div>
+    </div>`).join("");
+  el.querySelectorAll(".card").forEach(c => {
+    c.onclick = () => openStoreDetail(nearbyStores[c.dataset.i]);
+  });
+}
+
+function renderBasket() {
+  const list = document.getElementById("basketList");
+  document.getElementById("basketCount").textContent = basket.length;
+  document.getElementById("btnCompare").disabled = !(basket.length && userLat != null);
+  if (!basket.length) {
+    list.innerHTML = `<div class="basket-empty">Aucun produit</div>`;
+    return;
+  }
+  list.innerHTML = basket.map((p, i) => `
+    <div class="basket-item">
+      <span>${p.name}${p.qty > 1 ? " ×"+p.qty : ""}</span>
+      <button class="btn btn-sm btn-outline" data-i="${i}" style="padding:2px 8px">✕</button>
+    </div>`).join("");
+  list.querySelectorAll("[data-i]").forEach(btn => {
+    btn.onclick = (e) => { e.stopPropagation(); basket.splice(+btn.dataset.i, 1); saveBasket(); };
+  });
+}
+
+document.getElementById("btnClearBasket").onclick = () => {
+  if (basket.length && confirm("Vider le panier ?")) { basket = []; saveBasket(); renderStoreList(); }
+};
+document.getElementById("btnAddProduct").onclick = addProduct;
+document.getElementById("productInput").onkeypress = (e) => { if (e.key === "Enter") addProduct(); };
+
+function addProduct() {
+  const input = document.getElementById("productInput");
+  const q = input.value.trim();
+  if (!q || !data) return;
+
+  let product = null;
+  if (/^\d{8,14}$/.test(q) && data.products[q]) {
+    product = data.products[q];
+  } else {
+    product = Object.values(data.products || {}).find(p =>
+      (p.name || "").toLowerCase().includes(q.toLowerCase())
+    );
+  }
+  if (!product) {
+    // Ajout libre si pas trouvé (ex: Coulommiers)
+    product = { ean: "libre-" + q.toLowerCase().replace(/\s+/g,"-"), name: q, brand: "" };
+    if (!data.products[product.ean]) data.products[product.ean] = product;
+  }
+
+  const existing = basket.find(b => b.ean === product.ean);
+  if (existing) existing.qty += 1;
+  else basket.push({ ean: product.ean, name: product.name, qty: 1 });
+  saveBasket();
+  input.value = "";
+  showToast("Ajouté : " + product.name);
+}
+
+document.getElementById("btnCompare").onclick = () => {
+  if (!basket.length || !nearbyStores.length) return;
+
+  const results = nearbyStores.map(store => {
+    let total = 0, found = 0;
+    const details = [];
+    basket.forEach(item => {
+      const info = store.prices?.[item.ean];
+      if (info && info.price != null) {
+        total += info.price * item.qty;
+        found++;
+        details.push({ name: item.name, qty: item.qty, price: info.price, available: info.available !== false, date: info.date });
+      } else {
+        details.push({ name: item.name, qty: item.qty, price: null, available: false, date: null });
+      }
+    });
+    return { store, total: found ? total : null, found, totalProducts: basket.length, details };
+  });
+
+  results.sort((a, b) => {
+    if (b.found !== a.found) return b.found - a.found;
+    if (a.total == null) return 1;
+    if (b.total == null) return -1;
+    return a.total - b.total;
+  });
+
+  const el = document.getElementById("storeList");
+  el.innerHTML = results.map((r, i) => {
+    const isBest = i === 0 && r.found > 0;
+    const pct = Math.round((r.found / r.totalProducts) * 100);
+    let bc = "none", bt = "Aucun prix";
+    if (r.found === r.totalProducts) { bc = "best"; bt = "Complet"; }
+    else if (r.found > 0) { bc = "partial"; bt = pct + "%"; }
+    return `
+      <div class="card ${isBest?"best":""}" data-i="${i}">
+        <div class="card-header">
+          <div class="card-title">${isBest?"🏆 ":""}${r.store.name}</div>
+          <div class="card-price">${formatPrice(r.total)}</div>
+        </div>
+        <div class="card-meta">${r.store.distance_km.toFixed(1)} km • <span class="badge ${bc}">${bt}</span></div>
+      </div>`;
+  }).join("");
+
+  el.querySelectorAll(".card").forEach(c => {
+    c.onclick = () => openComparisonDetail(results[c.dataset.i]);
+  });
+  showToast("Comparaison terminée");
+};
+
+function openStoreDetail(store) {
+  document.getElementById("detailTitle").textContent = store.name;
+  document.getElementById("detailBody").innerHTML = `
+    <div class="detail-section">
+      <h3>Informations</h3>
+      <p><strong>Enseigne :</strong> ${store.brand || "—"}</p>
+      <p><strong>Adresse :</strong> ${store.address || "—"}</p>
+      <p><strong>Ville :</strong> ${store.city || "—"}</p>
+      <p><strong>Distance :</strong> ${store.distance_km.toFixed(2)} km</p>
+      <p><strong>Horaires :</strong> ${store.opening_hours || "—"}</p>
+    </div>`;
+  document.getElementById("detailPanel").classList.add("open");
+}
+
+function openComparisonDetail(result) {
+  const s = result.store;
+  document.getElementById("detailTitle").textContent = s.name;
+  const rows = result.details.map(d => `
+    <tr>
+      <td>${d.name}${d.qty>1?" ×"+d.qty:""}</td>
+      <td>${d.price!=null?formatPrice(d.price*d.qty):"—"}</td>
+      <td>${d.available?"✅":"❌"}</td>
+      <td style="font-size:12px;color:var(--muted)">${d.date||"—"}</td>
+    </tr>`).join("");
+  document.getElementById("detailBody").innerHTML = `
+    <div class="detail-section">
+      <h3>Résumé</h3>
+      <p><strong>Total :</strong> ${formatPrice(result.total)}</p>
+      <p><strong>Trouvés :</strong> ${result.found} / ${result.totalProducts}</p>
+      <p><strong>Distance :</strong> ${s.distance_km.toFixed(2)} km</p>
+    </div>
+    <div class="detail-section">
+      <h3>Détail</h3>
+      <table>
+        <thead><tr><th>Produit</th><th>Prix</th><th>Dispo</th><th>Date</th></tr></thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>`;
+  document.getElementById("detailPanel").classList.add("open");
+}
+
+document.getElementById("closeDetail").onclick = () => {
+  document.getElementById("detailPanel").classList.remove("open");
+};
+</script>
+</body>
+</html>
