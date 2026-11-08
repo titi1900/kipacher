@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-KIPACHER – Génération data/latest.json
-Premier jet : grandes villes françaises + 30 EAN.
+KIPACHER – data/latest.json
+Couverture France (maillage villes) + 30 EAN max.
 Sources : Open Prices + Open Food Facts.
 """
 
@@ -27,12 +27,13 @@ OUTPUT_PATH = ROOT / "data" / "latest.json"
 
 OPEN_PRICES_BASE = "https://prices.openfoodfacts.org/api/v1"
 OPEN_FOOD_FACTS_BASE = "https://world.openfoodfacts.org/api/v2"
-USER_AGENT = "KIPACHER-updater/1.1 (GitHub Actions; open data)"
+USER_AGENT = "KIPACHER-updater/1.2 (GitHub Actions; open data; France mesh)"
 
 # ---------------------------------------------------------------------------
-# Grandes villes (lat, lon, libellé)
+# Maillage France (lat, lon, libellé)
 # ---------------------------------------------------------------------------
 CENTERS_PRESETS: dict[str, tuple[float, float, str]] = {
+    # Grandes métropoles
     "paris": (48.8566, 2.3522, "Paris"),
     "lyon": (45.7640, 4.8357, "Lyon"),
     "marseille": (43.2965, 5.3698, "Marseille"),
@@ -51,61 +52,77 @@ CENTERS_PRESETS: dict[str, tuple[float, float, str]] = {
     "dijon": (47.3220, 5.0415, "Dijon"),
     "angers": (47.4784, -0.5632, "Angers"),
     "nimes": (43.8367, 4.3601, "Nîmes"),
-    "villeurbanne": (45.7719, 4.8902, "Villeurbanne"),
     "le-havre": (49.4944, 0.1079, "Le Havre"),
+    # Maillage complémentaire
     "dunkerque": (51.0343, 2.3768, "Dunkerque"),
+    "calais": (50.9513, 1.8587, "Calais"),
+    "amiens": (49.8941, 2.2958, "Amiens"),
+    "rouen": (49.4432, 1.0993, "Rouen"),
+    "caen": (49.1829, -0.3707, "Caen"),
+    "brest": (48.3904, -4.4861, "Brest"),
+    "le-mans": (48.0061, 0.1996, "Le Mans"),
+    "tours": (47.3941, 0.6848, "Tours"),
+    "orleans": (47.9029, 1.9093, "Orléans"),
+    "nancy": (48.6921, 6.1844, "Nancy"),
+    "metz": (49.1193, 6.1757, "Metz"),
+    "mulhouse": (47.7508, 7.3359, "Mulhouse"),
+    "besancon": (47.2378, 6.0241, "Besançon"),
+    "clermont-ferrand": (45.7772, 3.0870, "Clermont-Ferrand"),
+    "limoges": (45.8336, 1.2611, "Limoges"),
+    "poitiers": (46.5802, 0.3404, "Poitiers"),
+    "la-rochelle": (46.1603, -1.1511, "La Rochelle"),
+    "pau": (43.2951, -0.3708, "Pau"),
+    "bayonne": (43.4929, -1.4748, "Bayonne"),
+    "perpignan": (42.6887, 2.8948, "Perpignan"),
+    "avignon": (43.9493, 4.8055, "Avignon"),
+    "valence": (44.9334, 4.8924, "Valence"),
+    "annecy": (45.8992, 6.1294, "Annecy"),
+    "ajaccio": (41.9267, 8.7369, "Ajaccio"),
 }
 
-# Centres par défaut (premier jet – runtime Actions raisonnable)
-DEFAULT_CENTERS = [
-    "paris", "lyon", "marseille", "toulouse", "nice",
-    "nantes", "montpellier", "strasbourg", "bordeaux", "lille",
-    "rennes", "grenoble", "dijon", "dunkerque",
-]
+# France entière = tous les centres du preset (ordre stable)
+DEFAULT_CENTERS = list(CENTERS_PRESETS.keys())
 
-# ---------------------------------------------------------------------------
-# 30 EAN – panier repère France
-# ---------------------------------------------------------------------------
+# 30 EAN – priorité aux codes déjà vus avec prix en Open Prices
 DEFAULT_EANS: list[str] = [
     "3017620422003",  # Nutella 400g
     "3017620425035",  # Nutella 1kg
     "3017620429484",  # Nutella 825g
     "8000500310427",  # Biscuits Nutella
     "5449000000996",  # Coca-Cola 33cl
-    "5449000054227",  # Coca-Cola 1.75L (souvent en base)
+    "5449000054227",  # Coca-Cola 1L
     "3274080005003",  # Cristaline 1.5L
     "3033490004743",  # Skyr Danone
     "3228857000906",  # Pain de mie Harrys
-    "3250391809383",  # Variante MDD / base OP
-    "3560070117619",  # MDD Carrefour fréquente en OP
-    "3017624010692",  # Kinder / Ferrero (si présent)
-    "3017620407901",  # Produit Ferrero fréquent
-    "3046920029759",  # Lindt / chocolat (souvent scanné)
-    "8710438104320",  # Beurre / marque courante (selon base)
-    "3155250358788",  # Œufs / marque courante
-    "3245412666816",  # MDD Intermarché fréquente
-    "3253560000316",  # Pâtes / conserve courante
-    "3038350019800",  # Produit laitier courant
-    "3608580001506",  # Eau / boisson
-    "3266980011363",  # Jus / boisson
-    "3173286670012",  # Fromage / ultra-frais
-    "3095756211010",  # Café / épicerie
-    "3483974000183",  # Riz / féculent
-    "3564700009402",  # MDD Auchan fréquente
-    "3254560156780",  # Ultra-frais
-    "3760151010455",  # Bio / alternative
-    "3341586100010",  # Hygiène / entretien léger
-    "8719201000150",  # Produit ménager courant
-    "3017620422485",  # Variante Nutella / Ferrero
+    "3046920029759",  # Chocolat / Lindt (souvent scanné)
+    "3560070117619",  # MDD souvent présente OP
+    "3250391809383",
+    "3245412666816",
+    "3564700009402",
+    "3038350019800",
+    "3155250358788",
+    "8710438104320",
+    "3266980011363",
+    "3173286670012",
+    "3095756211010",
+    "3483974000183",
+    "3608580001506",
+    "3253560000316",
+    "3017624010692",
+    "3017620407901",
+    "3254560156780",
+    "3760151010455",
+    "3341586100010",
+    "8719201000150",
+    "3017620422485",
 ]
 
 REQUEST_TIMEOUT = 30
-SLEEP = 0.30
+SLEEP = 0.25
 
 SESSION = requests.Session()
 SESSION.headers.update({"User-Agent": USER_AGENT, "Accept": "application/json"})
 
-# Types OSM / lieux à exclure (non alimentaires)
 EXCLUDED_TYPES = {
     "cinema", "stationery", "gift", "cosmetics", "charging_station",
     "clothes", "car", "fuel", "electronics", "mobile_phone", "books",
@@ -249,7 +266,11 @@ def collect_stores(center_keys: list[str], radius_km: float, max_per_center: int
 
 
 def attach_prices(stores: dict[str, dict], eans: list[str], max_stores: int) -> None:
-    ranked = sorted(stores.values(), key=lambda s: s.get("price_count") or 0, reverse=True)[:max_stores]
+    ranked = sorted(
+        stores.values(),
+        key=lambda s: s.get("price_count") or 0,
+        reverse=True,
+    )[:max_stores]
     print(f"Prix : {len(ranked)} magasins × {len(eans)} EAN…")
     for store in ranked:
         loc_id = store.get("open_prices_id")
@@ -264,7 +285,10 @@ def attach_prices(stores: dict[str, dict], eans: list[str], max_stores: int) -> 
 def build_products(eans: list[str], skip_off: bool) -> dict[str, dict]:
     if skip_off:
         return {
-            ean: {"ean": ean, "name": ean, "brand": None, "quantity": None, "category": None, "image": None}
+            ean: {
+                "ean": ean, "name": ean, "brand": None,
+                "quantity": None, "category": None, "image": None,
+            }
             for ean in eans
         }
     print(f"Open Food Facts : {len(eans)} produits…")
@@ -276,7 +300,7 @@ def fallback_dataset(now_iso: str) -> dict[str, Any]:
         "meta": {
             "generated_at": now_iso,
             "source": "fallback-demo",
-            "version": "1.1",
+            "version": "1.2",
             "currency": "EUR",
             "notes": "Fallback – APIs indisponibles",
         },
@@ -287,22 +311,24 @@ def fallback_dataset(now_iso: str) -> dict[str, Any]:
 
 def build_dataset() -> dict[str, Any]:
     now_iso = datetime.now(timezone.utc).isoformat()
-    radius_km = env_float("RADIUS_KM", 8.0)
-    max_per_center = env_int("MAX_STORES_PER_CENTER", 20)
-    max_stores_to_price = env_int("MAX_STORES_TO_PRICE", 40)
-    max_products = env_int("MAX_PRODUCTS", 30)
+    radius_km = env_float("RADIUS_KM", 10.0)
+    max_per_center = env_int("MAX_STORES_PER_CENTER", 12)
+    max_stores_to_price = env_int("MAX_STORES_TO_PRICE", 60)
+    max_products = min(env_int("MAX_PRODUCTS", 30), 30)
     skip_off = os.environ.get("SKIP_OFF", "").strip().lower() in {"1", "true", "yes"}
 
     centers_raw = os.environ.get("CENTERS", "").strip()
-    center_keys = (
-        [c.strip() for c in centers_raw.split(",") if c.strip()]
-        if centers_raw
-        else list(DEFAULT_CENTERS)
-    )
+    if centers_raw.lower() in {"all", "*", "france"}:
+        center_keys = list(DEFAULT_CENTERS)
+    elif centers_raw:
+        center_keys = [c.strip() for c in centers_raw.split(",") if c.strip()]
+    else:
+        center_keys = list(DEFAULT_CENTERS)
+
     eans = DEFAULT_EANS[:max_products]
 
-    print("=== KIPACHER update_prices v1.1 ===")
-    print(f"Centres : {center_keys}")
+    print("=== KIPACHER update_prices v1.2 (France) ===")
+    print(f"Centres : {len(center_keys)} → {center_keys[:5]}...")
     print(f"Rayon   : {radius_km} km | EAN : {len(eans)}")
 
     stores_map = collect_stores(center_keys, radius_km, max_per_center)
@@ -324,12 +350,13 @@ def build_dataset() -> dict[str, Any]:
         "meta": {
             "generated_at": now_iso,
             "source": "open-prices+openfoodfacts",
-            "version": "1.1",
+            "version": "1.2",
             "currency": "EUR",
             "centers": center_keys,
+            "centers_count": len(center_keys),
             "radius_km": radius_km,
             "ean_count": len(eans),
-            "notes": "Premier jet grandes villes FR – 30 EAN – couverture Open Prices partielle",
+            "notes": "Maillage France – 30 EAN max – prix sur top magasins Open Prices",
         },
         "stores": stores_list,
         "products": products,
@@ -344,7 +371,10 @@ def main() -> int:
         dataset = fallback_dataset(datetime.now(timezone.utc).isoformat())
 
     OUTPUT_PATH.parent.mkdir(parents=True, exist_ok=True)
-    OUTPUT_PATH.write_text(json.dumps(dataset, ensure_ascii=False, indent=2), encoding="utf-8")
+    OUTPUT_PATH.write_text(
+        json.dumps(dataset, ensure_ascii=False, indent=2),
+        encoding="utf-8",
+    )
     print(f"OK → {OUTPUT_PATH}")
     return 0
 

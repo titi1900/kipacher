@@ -1,23 +1,9 @@
-# ============================================================
-# KIPACHER – Mise à jour automatique de data/latest.json
-# ============================================================
-# - Schedule quotidien 05:00 UTC
-# - Lancement manuel (workflow_dispatch)
-# - Grandes villes FR + 30 EAN (via env)
-# ============================================================
-
 name: Update KIPACHER prices
 
 on:
   schedule:
-    # Tous les jours à 05:00 UTC (≈ 06:00 Paris en hiver)
     - cron: "0 5 * * *"
   workflow_dispatch:
-    inputs:
-      reason:
-        description: "Raison du lancement manuel (optionnel)"
-        required: false
-        default: "manual"
 
 permissions:
   contents: write
@@ -26,6 +12,7 @@ jobs:
   update-prices:
     name: Générer latest.json puis commit
     runs-on: ubuntu-latest
+    timeout-minutes: 180
 
     concurrency:
       group: update-prices-${{ github.ref }}
@@ -61,39 +48,28 @@ jobs:
         run: python scripts/update_prices.py
         env:
           PYTHONUNBUFFERED: "1"
-          CENTERS: "paris,lyon,marseille,toulouse,nice,nantes,montpellier,strasbourg,bordeaux,lille,rennes,grenoble,dijon,dunkerque"
-          RADIUS_KM: "8"
-          MAX_STORES_PER_CENTER: "20"
-          MAX_STORES_TO_PRICE: "40"
+          # all = tous les centres du maillage France
+          CENTERS: "all"
+          RADIUS_KM: "10"
+          MAX_STORES_PER_CENTER: "12"
+          MAX_STORES_TO_PRICE: "60"
           MAX_PRODUCTS: "30"
           # SKIP_OFF: "1"
 
       - name: Check generated file
         run: |
-          if [ ! -f data/latest.json ]; then
-            echo "ERREUR : data/latest.json introuvable"
-            exit 1
-          fi
-          ls -lh data/latest.json
-          python -c "import json; d=json.load(open('data/latest.json')); print('stores', len(d.get('stores', []))); print('products', len(d.get('products', {}))); print('centers', (d.get('meta') or {}).get('centers'))"
+          test -f data/latest.json
+          python -c "import json;d=json.load(open('data/latest.json'));m=d.get('meta') or {};print('stores',len(d.get('stores',[])));print('products',len(d.get('products',{})));print('centers_count',m.get('centers_count'));print('ean_count',m.get('ean_count'))"
 
       - name: Commit and push if changed
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-
           git add data/latest.json
-
           if git diff --staged --quiet; then
-            echo "Aucun changement dans data/latest.json — pas de commit."
+            echo "Aucun changement"
             exit 0
           fi
-
-          TIMESTAMP=$(date -u +"%Y-%m-%d %H:%M UTC")
-          git commit -m "chore(data): update prices – ${TIMESTAMP}"
-
-          # Évite un rejet si main a avancé pendant le job
+          git commit -m "chore(data): update prices France – $(date -u +%Y-%m-%d)"
           git pull --rebase origin main
           git push origin HEAD:main
-
-          echo "Push OK."
