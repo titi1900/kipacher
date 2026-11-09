@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-08T13:53:06.932294+00:00",
+    "generated_at": "2026-11-09T13:31:36.613167+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -3670,7 +3670,7 @@
       "postcode": "54100",
       "opening_hours": null,
       "price_count": 238,
-      "product_count": 90,
+      "product_count": 216,
       "prices": {}
     },
     {
@@ -3685,7 +3685,7 @@
       "postcode": "54100",
       "opening_hours": null,
       "price_count": 288,
-      "product_count": 204,
+      "product_count": 280,
       "prices": {
         "3017620422003": {
           "price": 4.05,
@@ -3712,8 +3712,8 @@
       "city": "Nancy",
       "postcode": "54100",
       "opening_hours": null,
-      "price_count": 236,
-      "product_count": 183,
+      "price_count": 242,
+      "product_count": 236,
       "prices": {}
     },
     {
@@ -3941,7 +3941,7 @@
       "postcode": "57000",
       "opening_hours": null,
       "price_count": 3525,
-      "product_count": 3520,
+      "product_count": 3519,
       "prices": {
         "3274080005003": {
           "price": 0.33,
@@ -3983,7 +3983,7 @@
       "city": "Metz",
       "postcode": "57070",
       "opening_hours": null,
-      "price_count": 44,
+      "price_count": 45,
       "product_count": 44,
       "prices": {}
     },
