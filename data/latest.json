@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-09T13:31:36.613167+00:00",
+    "generated_at": "2026-11-10T13:10:34.709113+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -3712,7 +3712,7 @@
       "city": "Nancy",
       "postcode": "54100",
       "opening_hours": null,
-      "price_count": 242,
+      "price_count": 243,
       "product_count": 236,
       "prices": {}
     },
@@ -5235,7 +5235,7 @@
     "3017620422003": {
       "ean": "3017620422003",
       "name": "Nutella",
-      "brand": "Nutella",
+      "brand": "Ferrero",
       "quantity": "400 g e",
       "category": null,
       "image": "https://images.openfoodfacts.org/images/products/301/762/042/2003/front_en.879.200.jpg"
