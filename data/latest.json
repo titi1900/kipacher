@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-10T13:10:34.709113+00:00",
+    "generated_at": "2026-11-11T12:20:05.252671+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -3712,7 +3712,7 @@
       "city": "Nancy",
       "postcode": "54100",
       "opening_hours": null,
-      "price_count": 243,
+      "price_count": 247,
       "product_count": 236,
       "prices": {}
     },
@@ -4298,7 +4298,7 @@
       "city": "Limoges",
       "postcode": "87100",
       "opening_hours": null,
-      "price_count": 5,
+      "price_count": 6,
       "product_count": 5,
       "prices": {}
     },
@@ -4990,6 +4990,21 @@
       "opening_hours": null,
       "price_count": 1,
       "product_count": 1,
+      "prices": {}
+    },
+    {
+      "id": "7902",
+      "name": "E.Leclerc",
+      "brand": "E.Leclerc",
+      "type": "supermarket",
+      "lat": 44.909828,
+      "lon": 4.8830193,
+      "address": "E.Leclerc, Allée Sainte-Beuve, Valence, Drôme, Auvergne-Rhône-Alpes, France métropolitaine, 26000, France",
+      "city": "Valence",
+      "postcode": "26000",
+      "opening_hours": null,
+      "price_count": 4,
+      "product_count": 0,
       "prices": {}
     },
     {
