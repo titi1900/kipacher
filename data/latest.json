@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-12T13:28:52.097083+00:00",
+    "generated_at": "2026-11-13T12:45:49.953501+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -5003,7 +5003,7 @@
       "city": "Valence",
       "postcode": "26000",
       "opening_hours": null,
-      "price_count": 4,
+      "price_count": 6,
       "product_count": 0,
       "prices": {}
     },
