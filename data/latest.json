@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-13T12:45:49.953501+00:00",
+    "generated_at": "2026-11-14T11:53:43.130224+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -2621,6 +2621,21 @@
       "opening_hours": null,
       "price_count": 1,
       "product_count": 1,
+      "prices": {}
+    },
+    {
+      "id": "7922",
+      "name": "Netto",
+      "brand": "Netto",
+      "type": "supermarket",
+      "lat": 43.7674491,
+      "lon": 4.2806037,
+      "address": "Netto, Chemin de Calvisson, Bernis, Nîmes, Gard, Occitanie, France métropolitaine, 30620, France",
+      "city": "Bernis",
+      "postcode": "30620",
+      "opening_hours": null,
+      "price_count": 1,
+      "product_count": 0,
       "prices": {}
     },
     {
