@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-14T11:53:43.130224+00:00",
+    "generated_at": "2026-11-15T12:25:41.741137+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -159,6 +159,21 @@
       "prices": {}
     },
     {
+      "id": "7938",
+      "name": "Veggie Lovers",
+      "brand": null,
+      "type": "restaurant",
+      "lat": 48.8594905,
+      "lon": 2.3504583,
+      "address": "Veggie Lovers, 77, Rue Saint-Martin, Quartier Saint-Merri, Paris 4e Arrondissement, Paris, Île-de-France, France métropolitaine, 75004, France",
+      "city": "Paris",
+      "postcode": "75004",
+      "opening_hours": null,
+      "price_count": 0,
+      "product_count": 0,
+      "prices": {}
+    },
+    {
       "id": "1056",
       "name": "Monop'",
       "brand": "Monop'",
@@ -232,40 +247,6 @@
       "price_count": 4,
       "product_count": 4,
       "prices": {}
-    },
-    {
-      "id": "884",
-      "name": "Intermarché Express",
-      "brand": "Intermarché Express",
-      "type": "supermarket",
-      "lat": 48.8590682,
-      "lon": 2.3482385,
-      "address": "Intermarché Express, Boulevard de Sébastopol, Quartier Les Halles, Paris 1er Arrondissement, Paris, Île-de-France, France métropolitaine, 75001, France",
-      "city": "Paris",
-      "postcode": "75001",
-      "opening_hours": null,
-      "price_count": 64,
-      "product_count": 61,
-      "prices": {
-        "3017620422003": {
-          "price": 3.3,
-          "available": true,
-          "promo": true,
-          "date": "2025-01-21"
-        },
-        "3017620425035": {
-          "price": 7.79,
-          "available": true,
-          "promo": false,
-          "date": "2025-01-21"
-        },
-        "3017620429484": {
-          "price": 6.76,
-          "available": true,
-          "promo": true,
-          "date": "2025-01-21"
-        }
-      }
     },
     {
       "id": "2901",
@@ -4358,7 +4339,7 @@
       "city": "Poitiers",
       "postcode": "86000",
       "opening_hours": null,
-      "price_count": 7,
+      "price_count": 9,
       "product_count": 7,
       "prices": {}
     },
@@ -5336,7 +5317,7 @@
     },
     "3046920029759": {
       "ean": "3046920029759",
-      "name": "Excellence Noir Prodigieux 90% Cacao",
+      "name": "Extra fine dark chocolate",
       "brand": "Lindt",
       "quantity": "100g",
       "category": null,
