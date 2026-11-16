@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-15T12:25:41.741137+00:00",
+    "generated_at": "2026-11-16T13:16:57.429751+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -2616,7 +2616,7 @@
       "postcode": "30620",
       "opening_hours": null,
       "price_count": 1,
-      "product_count": 0,
+      "product_count": 1,
       "prices": {}
     },
     {
@@ -3709,7 +3709,7 @@
       "postcode": "54100",
       "opening_hours": null,
       "price_count": 247,
-      "product_count": 236,
+      "product_count": 247,
       "prices": {}
     },
     {
@@ -3980,7 +3980,7 @@
       "postcode": "57070",
       "opening_hours": null,
       "price_count": 45,
-      "product_count": 44,
+      "product_count": 45,
       "prices": {}
     },
     {
@@ -4295,7 +4295,7 @@
       "postcode": "87100",
       "opening_hours": null,
       "price_count": 6,
-      "product_count": 5,
+      "product_count": 6,
       "prices": {}
     },
     {
@@ -4340,7 +4340,7 @@
       "postcode": "86000",
       "opening_hours": null,
       "price_count": 9,
-      "product_count": 7,
+      "product_count": 9,
       "prices": {}
     },
     {
@@ -4444,7 +4444,7 @@
       "city": "La Rochelle",
       "postcode": "17000",
       "opening_hours": null,
-      "price_count": 219,
+      "price_count": 222,
       "product_count": 213,
       "prices": {}
     },
@@ -5000,7 +5000,7 @@
       "postcode": "26000",
       "opening_hours": null,
       "price_count": 6,
-      "product_count": 0,
+      "product_count": 6,
       "prices": {}
     },
     {
