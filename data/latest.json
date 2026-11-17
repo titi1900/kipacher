@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-16T13:16:57.429751+00:00",
+    "generated_at": "2026-11-17T14:01:48.531679+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -2615,7 +2615,7 @@
       "city": "Bernis",
       "postcode": "30620",
       "opening_hours": null,
-      "price_count": 1,
+      "price_count": 2,
       "product_count": 1,
       "prices": {}
     },
@@ -3723,7 +3723,7 @@
       "city": "Nancy",
       "postcode": "54100",
       "opening_hours": null,
-      "price_count": 493,
+      "price_count": 502,
       "product_count": 417,
       "prices": {}
     },
@@ -4025,6 +4025,21 @@
       "postcode": "68200",
       "opening_hours": null,
       "price_count": 0,
+      "product_count": 0,
+      "prices": {}
+    },
+    {
+      "id": "7955",
+      "name": "Intermarché",
+      "brand": "Intermarché",
+      "type": "supermarket",
+      "lat": 47.7576799,
+      "lon": 7.3994152,
+      "address": "Intermarché, 65, Rue de l'Île Napoléon, Rixheim, Mulhouse, Haut-Rhin, Collectivité européenne d'Alsace, Grand Est, France métropolitaine, 68170, France",
+      "city": "Rixheim",
+      "postcode": "68170",
+      "opening_hours": null,
+      "price_count": 1,
       "product_count": 0,
       "prices": {}
     },
