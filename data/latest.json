@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-18T13:37:08.617915+00:00",
+    "generated_at": "2026-11-19T14:02:54.166486+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -2780,7 +2780,7 @@
       "city": "Amiens",
       "postcode": "80000",
       "opening_hours": null,
-      "price_count": 203,
+      "price_count": 212,
       "product_count": 199,
       "prices": {}
     },
@@ -2965,6 +2965,36 @@
       "prices": {}
     },
     {
+      "id": "7974",
+      "name": "E.Leclerc",
+      "brand": "E.Leclerc",
+      "type": "travel_agency",
+      "lat": 49.1859891,
+      "lon": -0.3807956,
+      "address": "E.Leclerc, Rue Lanfranc, Saint-Nicolas, Caen, Calvados, Normandie, France métropolitaine, 14000, France",
+      "city": "Caen",
+      "postcode": "14000",
+      "opening_hours": null,
+      "price_count": 0,
+      "product_count": 0,
+      "prices": {}
+    },
+    {
+      "id": "7972",
+      "name": "Biocoop",
+      "brand": "Biocoop",
+      "type": "supermarket",
+      "lat": 49.172866,
+      "lon": -0.3930298,
+      "address": "Biocoop, 35, Avenue Henry Chéron, Beaulieu, Bas de Venoix, Caen, Calvados, Normandie, France métropolitaine, 14000, France",
+      "city": "Caen",
+      "postcode": "14000",
+      "opening_hours": null,
+      "price_count": 20,
+      "product_count": 0,
+      "prices": {}
+    },
+    {
       "id": "7605",
       "name": "Super U",
       "brand": "Super U",
@@ -2975,7 +3005,7 @@
       "city": "Caen",
       "postcode": "14000",
       "opening_hours": null,
-      "price_count": 1,
+      "price_count": 15,
       "product_count": 0,
       "prices": {}
     },
@@ -3097,21 +3127,6 @@
       "opening_hours": null,
       "price_count": 2,
       "product_count": 2,
-      "prices": {}
-    },
-    {
-      "id": "2624",
-      "name": "Blainville Funéraire",
-      "brand": null,
-      "type": "funeral_directors",
-      "lat": 49.2311176,
-      "lon": -0.2944837,
-      "address": "Blainville Funéraire, Rue du Royal Norfolk, Les Portes de la Mer, Blainville-sur-Orne, Caen, Calvados, Normandie, France métropolitaine, 14550, France",
-      "city": "Blainville-sur-Orne",
-      "postcode": "14550",
-      "opening_hours": null,
-      "price_count": 7,
-      "product_count": 6,
       "prices": {}
     },
     {
