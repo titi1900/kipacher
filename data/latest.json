@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-19T14:02:54.166486+00:00",
+    "generated_at": "2026-11-20T13:45:46.373071+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -2615,7 +2615,7 @@
       "city": "Bernis",
       "postcode": "30620",
       "opening_hours": null,
-      "price_count": 3,
+      "price_count": 11,
       "product_count": 1,
       "prices": {}
     },
@@ -5029,7 +5029,7 @@
       "city": "Valence",
       "postcode": "26000",
       "opening_hours": null,
-      "price_count": 6,
+      "price_count": 8,
       "product_count": 6,
       "prices": {}
     },
