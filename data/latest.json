@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-21T13:11:23.448516+00:00",
+    "generated_at": "2026-11-22T12:58:33.590130+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -1301,7 +1301,7 @@
       "city": "Strasbourg",
       "postcode": "67100",
       "opening_hours": null,
-      "price_count": 52,
+      "price_count": 53,
       "product_count": 51,
       "prices": {}
     },
@@ -4474,7 +4474,7 @@
       "city": "La Rochelle",
       "postcode": "17000",
       "opening_hours": null,
-      "price_count": 222,
+      "price_count": 227,
       "product_count": 213,
       "prices": {}
     },
