@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-24T15:27:46.097250+00:00",
+    "generated_at": "2026-11-25T15:13:22.937703+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -2615,7 +2615,7 @@
       "city": "Bernis",
       "postcode": "30620",
       "opening_hours": null,
-      "price_count": 11,
+      "price_count": 12,
       "product_count": 8,
       "prices": {}
     },
@@ -2990,7 +2990,7 @@
       "city": "Caen",
       "postcode": "14000",
       "opening_hours": null,
-      "price_count": 20,
+      "price_count": 25,
       "product_count": 13,
       "prices": {}
     },
@@ -3005,7 +3005,7 @@
       "city": "Caen",
       "postcode": "14000",
       "opening_hours": null,
-      "price_count": 15,
+      "price_count": 18,
       "product_count": 9,
       "prices": {}
     },
@@ -3109,21 +3109,6 @@
       "address": "Super U, Rue Émile Zola, Les Charmettes, Mondeville, Caen, Calvados, Normandie, France métropolitaine, 14120, France",
       "city": "Mondeville",
       "postcode": "14120",
-      "opening_hours": null,
-      "price_count": 1,
-      "product_count": 1,
-      "prices": {}
-    },
-    {
-      "id": "6179",
-      "name": "Super U",
-      "brand": "Super U",
-      "type": "supermarket",
-      "lat": 49.1503567,
-      "lon": -0.3523104,
-      "address": "Super U, Avenue Jean Vilar, Ifs-Plaine, Ifs, Caen, Calvados, Normandie, France métropolitaine, 14123, France",
-      "city": "Ifs",
-      "postcode": "14123",
       "opening_hours": null,
       "price_count": 1,
       "product_count": 1,
@@ -4429,7 +4414,7 @@
       "city": "La Rochelle",
       "postcode": "17000",
       "opening_hours": null,
-      "price_count": 147,
+      "price_count": 150,
       "product_count": 137,
       "prices": {}
     },
