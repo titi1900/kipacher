@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-25T15:13:22.937703+00:00",
+    "generated_at": "2026-11-26T14:38:27.649192+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -286,6 +286,21 @@
       }
     },
     {
+      "id": "8069",
+      "name": "KFC",
+      "brand": "KFC",
+      "type": "fast_food",
+      "lat": 45.7650259,
+      "lon": 4.8356915,
+      "address": "KFC, Rue Gentil, Cordeliers, Lyon 2e Arrondissement, Lyon, Métropole de Lyon, Rhône, Auvergne-Rhône-Alpes, France métropolitaine, 69002, France",
+      "city": "Lyon",
+      "postcode": "69002",
+      "opening_hours": null,
+      "price_count": 0,
+      "product_count": 0,
+      "prices": {}
+    },
+    {
       "id": "924",
       "name": "La Vie Claire",
       "brand": "La Vie Claire",
@@ -418,21 +433,6 @@
       "opening_hours": null,
       "price_count": 20,
       "product_count": 18,
-      "prices": {}
-    },
-    {
-      "id": "6941",
-      "name": "Le Petit Casino",
-      "brand": "Le Petit Casino",
-      "type": "convenience",
-      "lat": 45.7589866,
-      "lon": 4.8298542,
-      "address": "Le Petit Casino, Rue du Plat, Bellecour, Lyon 2e Arrondissement, Lyon, Métropole de Lyon, Rhône, Auvergne-Rhône-Alpes, France métropolitaine, 69002, France",
-      "city": "Lyon",
-      "postcode": "69002",
-      "opening_hours": null,
-      "price_count": 19,
-      "product_count": 19,
       "prices": {}
     },
     {
@@ -5029,7 +5029,7 @@
       "city": "Valence",
       "postcode": "26000",
       "opening_hours": null,
-      "price_count": 8,
+      "price_count": 10,
       "product_count": 7,
       "prices": {}
     },
