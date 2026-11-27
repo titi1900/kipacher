@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-26T14:38:27.649192+00:00",
+    "generated_at": "2026-11-27T14:34:13.365877+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -3723,7 +3723,7 @@
       "city": "Nancy",
       "postcode": "54100",
       "opening_hours": null,
-      "price_count": 502,
+      "price_count": 532,
       "product_count": 423,
       "prices": {}
     },
