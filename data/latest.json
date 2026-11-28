@@ -1,6 +1,6 @@
 {
   "meta": {
-    "generated_at": "2026-11-27T14:34:13.365877+00:00",
+    "generated_at": "2026-11-28T13:48:33.934649+00:00",
     "source": "open-prices+openfoodfacts",
     "version": "1.2",
     "currency": "EUR",
@@ -2990,7 +2990,7 @@
       "city": "Caen",
       "postcode": "14000",
       "opening_hours": null,
-      "price_count": 25,
+      "price_count": 37,
       "product_count": 13,
       "prices": {}
     },
@@ -3005,7 +3005,7 @@
       "city": "Caen",
       "postcode": "14000",
       "opening_hours": null,
-      "price_count": 18,
+      "price_count": 43,
       "product_count": 9,
       "prices": {}
     },
